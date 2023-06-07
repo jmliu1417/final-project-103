@@ -19,35 +19,32 @@ float midi[127];
 int A_four = 440;  // a is 440 hz...
 
 
-int sadSong[4][2] = {
+int sadSong[2][2] = {
   { 58, 100 },
   { 55, 100 },
-  { 60, 200 },
+};
+
+int happySong[2][2] = {
+  { 61, 200 },
   { 57, 200 },
 };
 
-int happySong[4][2] = {
+int startSong[4][2] = {
   { 58, 100 },
-  { 55, 100 },
-  { 60, 200 },
-  { 57, 200 },
+  { 59, 100 },
+  { 60, 100 },
+  { 61, 100 },
 };
 
-int startUp[4][2] = {
+int offSong[4][2] = {
+  { 61, 100 },
+  { 60, 100 },
+  { 59, 100 },
   { 58, 100 },
-  { 55, 100 },
-  { 60, 200 },
-  { 57, 200 },
 };
 
-int turnOff[4][2] = {
-  { 58, 100 },
-  { 55, 100 },
-  { 60, 200 },
-  { 57, 200 },
-};
+int buttonPressed = 0;
 
-int buttonPressed;
 
 void setup() {
   // put your setup code here, to run once:
@@ -82,6 +79,25 @@ void loop() {
   }
   // startup code
   if(switchVal){
+
+    bool level1Return = false;
+
+    for (int i = 0; i < sizeof(startSong) / sizeof(startSong[0]); i++) {
+      CircuitPlayground.playTone(midi[startSong[i][0]], startSong[i][1]);
+      }
+
+      for(int i=0; i<3; i++){
+      for(int j=0; j<10; j++){
+        CircuitPlayground.setPixelColor(j, 0, 255, 0);
+      }
+      delay(300);
+      for(int j=0; j<10; j++){
+        CircuitPlayground.setPixelColor(j, 0, 0, 0);
+      }
+      delay(300);
+    }
+
+
     level1();
     if(level1() == true){
       Serial.println("okay");
@@ -89,19 +105,13 @@ void loop() {
       Serial.println("uhhh");
     }
 //this is the initial startup code, could probably fit in a function.
-    // for(int i=0; i<3; i++){
-    //   for(int j=0; j<10; j++){
-    //     CircuitPlayground.setPixelColor(j, 0, 0, 255);
-    //   }
-    //   delay(300);
-    //   for(int j=0; j<10; j++){
-    //     CircuitPlayground.setPixelColor(j, 0, 0, 0);
-    //   }
-    //   delay(300);
-    // }
-
+    
   }else if(!switchVal){
-    delay(50);
+    delay(5);
+
+    for (int i = 0; i < sizeof(offSong) / sizeof(offSong[0]); i++) {
+      CircuitPlayground.playTone(midi[offSong[i][0]], offSong[i][1]);
+      }
     
     //turning off sequence (lights)
     for(int i=0; i<3; i++){
@@ -158,8 +168,17 @@ bool level1(){
     if(rightFlag || leftFlag){
       buttonPressed = i;
       if(buttonPressed == randomLED){
+
+        for (int i = 0; i < sizeof(happySong) / sizeof(happySong[0]); i++) {
+      CircuitPlayground.playTone(midi[happySong[i][0]], happySong[i][1]);
+      }
+
         return true;
       }else{
+
+        for (int i = 0; i < sizeof(sadSong) / sizeof(sadSong[0]); i++) {
+      CircuitPlayground.playTone(midi[sadSong[i][0]], sadSong[i][1]);
+      }
         return false;
         break;
       }
